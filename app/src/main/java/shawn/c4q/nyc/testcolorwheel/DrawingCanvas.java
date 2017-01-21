@@ -24,16 +24,18 @@ import java.util.HashMap;
 public class DrawingCanvas extends LinearLayout {
 
     private int paintColor;
-    private Paint drawPaint;
+    private Paint drawPaint, canvasPaint;
     private Path drawPath;
+    Canvas drawCanvas;
+
+    Bitmap canvasBitmap;
+
     private HashMap<Path, Paint> colorPathList = new HashMap<>();
 
 
-    DrawingCanvas thisCanvas;
 
     public DrawingCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
-        thisCanvas = this;
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.DrawingCanvas);
         final int arraySize = array.getIndexCount();
         for (int i = 0; i < arraySize; i++) {
@@ -47,12 +49,27 @@ public class DrawingCanvas extends LinearLayout {
         }
         array.recycle();
         setBackgroundColor(Color.TRANSPARENT);
-        createPaint(paintColor);
+        drawPaint = createPaint(paintColor);
+        drawPath = createPath(new Path());
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        drawCanvas = new Canvas(canvasBitmap);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+//        for(Path p: colorPathList.keySet()) {
+//                canvas.drawPath(p, colorPathList.get(p));
+//        }
+
+        canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
+
+
         super.onDraw(canvas);
     }
 
@@ -60,29 +77,43 @@ public class DrawingCanvas extends LinearLayout {
     public boolean onTouchEvent(MotionEvent event) {
         float touchX = event.getX();
         float touchY = event.getY();
+        Path tempPath;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 drawPath.moveTo(touchX, touchY);
+//                tempPath = new Path();
+//                tempPath.lineTo(touchX, touchY);
+//                colorPathList.put(tempPath, createPaint(paintColor));
                 break;
             case MotionEvent.ACTION_MOVE:
                 drawPath.lineTo(touchX, touchY);
-                invalidate();
                 break;
             case MotionEvent.ACTION_UP:
+                drawCanvas.drawPath(drawPath, drawPaint);
+                drawPath.reset();
                 break;
         }
+        invalidate();
         return true;
     }
 
-    private void createPaint(int paintColor) {
-        drawPaint = new Paint();
-        drawPaint.setColor(paintColor);
-        drawPaint.setAntiAlias(true);
-        drawPaint.setStyle(Paint.Style.STROKE);
-        drawPaint.setStrokeJoin(Paint.Join.ROUND);
-        drawPaint.setStrokeCap(Paint.Cap.ROUND);
-        drawPaint.setStrokeWidth(20);
-        drawPath = new Path();
+    private Paint createPaint(int paintColor) {
+        Paint myNewPaint = new Paint();
+
+        myNewPaint.setColor(paintColor);
+        myNewPaint.setAntiAlias(true);
+        myNewPaint.setStyle(Paint.Style.STROKE);
+        myNewPaint.setStrokeJoin(Paint.Join.ROUND);
+        myNewPaint.setStrokeCap(Paint.Cap.ROUND);
+        myNewPaint.setStrokeWidth(20);
+        canvasPaint = new Paint(Paint.DITHER_FLAG);
+
+
+        return myNewPaint;
+    }
+
+    private Path createPath(Path myNewPath){
+        return myNewPath;
     }
 
 
