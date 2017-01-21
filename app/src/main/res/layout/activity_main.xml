@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="shawn.c4q.nyc.testcolorwheel.MainActivity">
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/replaceMe"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"/>
+
+    <shawn.c4q.nyc.testcolorwheel.DrawingCanvas
+        android:id="@+id/paintCanvas"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_alignParentBottom="true"
+        app:BrushColor = "@color/myBrush"/>
+
+
+</RelativeLayout>
