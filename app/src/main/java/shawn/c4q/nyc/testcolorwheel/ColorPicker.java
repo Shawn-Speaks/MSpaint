@@ -22,6 +22,7 @@ import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader.TileMode;
 import android.graphics.SweepGradient;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
@@ -61,6 +62,12 @@ public class ColorPicker extends View {
     private int innerWheelRadius;
     private int colorWheelRadius;
     private Matrix gradientRotationMatrix;
+    private Drawable tempDrawable;
+    private Bitmap tempBitmap;
+//    private listener listener;
+    private DrawingCanvas drawingArea = (DrawingCanvas) findViewById(R.id.paintCanvas);
+
+
     /**
      * Currently selected color
      */
@@ -238,6 +245,8 @@ public class ColorPicker extends View {
                 updatePaintColor(getColor());
                 return true;
         }
+
+
         return super.onTouchEvent(event);
     }
     public void setColor(int color) {
@@ -267,10 +276,21 @@ public class ColorPicker extends View {
         }
     }
 
-    public void updatePaintColor(int color){
+    public void updatePaintColor(int color) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("newColor", color);
         editor.apply();
     }
+
+//    public interface listener{
+//        void passDrawable(Drawable drawable);
+//    }
+//
+//
+//    public void setListener(ColorPicker.listener listener) {
+//        this.listener = listener;
+//    }
+
 }
+

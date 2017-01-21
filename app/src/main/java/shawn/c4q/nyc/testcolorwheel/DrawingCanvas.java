@@ -3,34 +3,37 @@ package shawn.c4q.nyc.testcolorwheel;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import java.util.HashMap;
 
 /**
- * Created by shawnspeaks on 1/18/17.
  */
 
-public class DrawingCanvas extends View {
+public class DrawingCanvas extends LinearLayout {
 
-    public static int paintColor;
+    private int paintColor;
     private Paint drawPaint;
     private Path drawPath;
-    private Context context;
-    private HashMap<Path, Integer> colorPathList = new HashMap<>();
+    private HashMap<Path, Paint> colorPathList = new HashMap<>();
 
 
+    DrawingCanvas thisCanvas;
 
     public DrawingCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.context = context;
+        thisCanvas = this;
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.DrawingCanvas);
         final int arraySize = array.getIndexCount();
         for (int i = 0; i < arraySize; i++) {
@@ -43,6 +46,7 @@ public class DrawingCanvas extends View {
             }
         }
         array.recycle();
+        setBackgroundColor(Color.TRANSPARENT);
         createPaint(paintColor);
     }
 
@@ -90,11 +94,15 @@ public class DrawingCanvas extends View {
     }
 
     private int getColorPickerColor(){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         return preferences.getInt("newColor", 0);
     }
 
-    public static int getPaintColor() {
-        return paintColor;
+    public void updateBackground(ViewGroup viewgroup){
+        viewgroup.setDrawingCacheEnabled(true);
+        viewgroup.buildDrawingCache(true);
+        Bitmap tempBitmap = Bitmap.createBitmap(viewgroup.getDrawingCache());
+        Drawable tempDrawable = new BitmapDrawable(getResources(), tempBitmap);
+        viewgroup.setBackground(tempDrawable);
     }
 }
